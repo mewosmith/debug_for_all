@@ -40,8 +40,16 @@
                                 ], 
                             {8} = table [
                                 $Return = Display_Galaxy_State,
-                                $Name = 'DisplayGalaxy',
-                                ],                                 
+                                $Name = 'Display Galaxy',
+                                ],
+                            {9} = table [
+                                $Return = Add_Faction_Rep,
+                                $Name = 'Add Faction Rep And License',
+                                ], 
+                            {10} = table [
+                                $Return = Add_Money,
+                                $Name = 'Add Money',
+                                ],                                    
                         ]" />
             </actions>
             <cues>
@@ -194,6 +202,47 @@
                     <param name="Width" value="1200" />
                 </cue>
             </cues>
+        </cue>
+        <cue name="Add_Faction_Rep" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <set_value name="$Faction" exact="lookup.faction.list" />
+                <do_all exact="$Faction.count" counter="$i" reverse="true">
+                    <add_faction_relation faction="$Faction.{$i}" otherfaction="faction.player" value="1.0" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="ceremonyfriend" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="ceremonyally" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="subgroupfriend" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="capitalequipment" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="capitalship" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="generaluseequipment" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="generaluseship" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="intelligence" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="militaryequipment" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="militaryship" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="police" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_gen_basic" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_gen_intermediate" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_gen_advanced" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_equip_sm" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_equip_lxl" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_illegal" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_race_basic" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_race_intermediate" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_race_advanced" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="station_venture" />
+                    <add_licence faction="faction.player" licencefaction="$Faction.{$i}" type="tradesubscription" />
+                </do_all>
+            </actions>
+        </cue>
+        <cue name="Add_Money" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <transfer_money from="faction.argon" to="faction.player" amount="5000000000 *1Cr" />
+            </actions>
         </cue>
         <cue name="Add_Inventory" instantiate="true">
             <conditions>
