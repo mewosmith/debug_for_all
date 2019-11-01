@@ -33,7 +33,15 @@
                             {6} = table [
                                 $Return = Player_Position,
                                 $Name = 'Player Position',
-                                ],                                
+                                ], 
+                            {7} = table [
+                                $Return = Create_Object_Menu,
+                                $Name = 'Create Object',
+                                ], 
+                            {8} = table [
+                                $Return = Display_Galaxy_State,
+                                $Name = 'DisplayGalaxy',
+                                ],                                 
                         ]" />
             </actions>
             <cues>
@@ -44,6 +52,89 @@
                     <param name="ButtonText" value="'Open Menu'" />
                 </cue>
             </cues>
+        </cue>
+        <cue name="Display_Galaxy_State" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <set_value name="$ObjectTable" exact="table[]" />
+                <set_value name="$Visitors" exact="[faction.visitor001,faction.visitor002,faction.visitor003,faction.visitor004,faction.visitor005,faction.visitor006,faction.visitor007,faction.visitor008,faction.visitor009,faction.visitor010,faction.visitor011,faction.visitor012,faction.visitor013,faction.visitor014,faction.visitor015,faction.visitor016,faction.visitor017,faction.visitor018,faction.visitor019,faction.visitor020,faction.visitor021,faction.visitor022,faction.visitor023,faction.visitor024,faction.visitor025,faction.visitor026,faction.visitor027,faction.visitor028,faction.visitor029,faction.visitor030,faction.visitor031,faction.visitor032,faction.visitor033,faction.visitor034,faction.visitor035,faction.visitor036,faction.visitor037,faction.visitor038,faction.visitor039,faction.visitor040,faction.visitor041,faction.visitor042,faction.visitor043,faction.visitor044,faction.visitor045,faction.visitor046,faction.visitor047,faction.visitor048,faction.visitor049,faction.visitor050,faction.visitor051,faction.visitor052,faction.visitor053,faction.visitor054,faction.visitor055,faction.visitor056,faction.visitor057,faction.visitor058,faction.visitor059,faction.visitor060,faction.visitor061,faction.visitor062,faction.visitor063,faction.visitor064,faction.visitor065,faction.visitor066,faction.visitor067,faction.visitor068,faction.visitor069,faction.visitor070,faction.visitor071,faction.visitor072,faction.visitor073,faction.visitor074,faction.visitor075,faction.visitor076,faction.visitor077,faction.visitor078,faction.visitor079,faction.visitor080,faction.visitor081,faction.visitor082,faction.visitor083,faction.visitor084,faction.visitor085,faction.visitor086,faction.visitor087,faction.visitor088,faction.visitor089,faction.visitor090,faction.visitor091,faction.visitor092,faction.visitor093,faction.visitor094,faction.visitor095,faction.visitor096,faction.visitor097,faction.visitor098,faction.visitor099,faction.visitor100]" />
+                <create_list name="$Object" />
+                <find_ship name="$Ship" space="player.galaxy" multiple="true"></find_ship>
+                <do_all exact="$Ship.count" counter="$i">
+                    <do_if value="$Visitors.indexof.{$Ship.{$i}.owner} == 0">
+                        <do_if value="not $ObjectTable.{$Ship.{$i}.owner}.$Ships?">
+                            <set_value name="$ObjectTable.{$Ship.{$i}.owner}" exact="table[]" />
+                            <set_value name="$ObjectTable.{$Ship.{$i}.owner}.$Ships" exact="[]" />
+                        </do_if>
+                        <append_to_list name="$ObjectTable.{$Ship.{$i}.owner}.$Ships" exact="$Ship.{$i}" />
+                    </do_if>
+                </do_all>
+                <find_station name="$Stations" space="player.galaxy" multiple="true"></find_station>
+                <do_all exact="$Stations.count" counter="$i">
+                    <do_if value="$Visitors.indexof.{$Stations.{$i}.owner} == 0">
+                        <do_if value="not $ObjectTable.{$Stations.{$i}.owner}.$Stations?">
+                            <set_value name="$ObjectTable.{$Stations.{$i}.owner}.$Stations" exact="[]" />
+                        </do_if>
+                        <append_to_list name="$ObjectTable.{$Stations.{$i}.owner}.$Stations" exact="$Stations.{$i}" />
+                    </do_if>
+                </do_all>
+                <find_sector name="$Sector" space="player.galaxy" multiple="true"></find_sector>
+                <do_all exact="$Sector.count" counter="$i">
+                    <do_if value="$Visitors.indexof.{$Sector.{$i}.owner} == 0">
+                        <do_if value="not $ObjectTable.{$Sector.{$i}.owner}.$Sectors?">
+                            <set_value name="$ObjectTable.{$Sector.{$i}.owner}.$Sectors" exact="[]" />
+                        </do_if>
+                        <append_to_list name="$ObjectTable.{$Sector.{$i}.owner}.$Sectors" exact="$Sector.{$i}" />
+                    </do_if>
+                </do_all>
+            </actions>
+            <cues>
+                <cue name="Display_Galaxy_State_Menu_Call_Menu_LIB" ref="md.Debug_For_All.Menu_LIB">
+                    <param name="Title" value="'Display Galaxy State'" />
+                    <param name="ObjectTable" value="$ObjectTable" />
+                    <param name="MenuType" value="'table2'" />
+                    <param name="ButtonText" value="'Create Object'" />
+                </cue>
+            </cues>
+        </cue>
+        <cue name="Create_Object_Menu" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <set_value name="$ObjectTable" exact="table[]" />
+                <set_value name="$Object" exact="lookup.ware.list" />
+                <do_all exact="$Object.count" counter="$i">
+                    <do_if value="$Object.{$i}.objectmacro.class?">
+                        <do_if value="not $ObjectTable.{$Object.{$i}.objectmacro.class}.$Objects?">
+                            <set_value name="$ObjectTable.{$Object.{$i}.objectmacro.class}" exact="table[]" />
+                            <set_value name="$ObjectTable.{$Object.{$i}.objectmacro.class}.$Objects" exact="[]" />
+                        </do_if>
+                        <append_to_list name="$ObjectTable.{$Object.{$i}.objectmacro.class}.$Objects" exact="$Object.{$i}" />
+                    </do_if>
+                </do_all>
+            </actions>
+            <cues>
+                <cue name="Create_Object_Menu_Call_Menu_LIB" ref="md.Debug_For_All.Menu_LIB">
+                    <param name="Title" value="'Create Object'" />
+                    <param name="ReturnCue" value="Create_Object" />
+                    <param name="ObjectTable" value="$ObjectTable" />
+                    <param name="MenuType" value="'table3'" />
+                    <param name="ButtonText" value="'Create Object'" />
+                </cue>
+            </cues>
+        </cue>
+        <cue name="Create_Object" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <create_object macro="event.param.$echo.objectmacro" owner="faction.player" sector="player.sector">
+                    <safepos object="player.ship" z="1000" />
+                </create_object>
+            </actions>
         </cue>
         <cue name="TransformPosition" instantiate="true">
             <conditions>
@@ -58,7 +149,7 @@
                     <position value="$position" />
                 </transform_position>
                 <warp object="player.ship" sector="player.sector">
-                    <position value="$position"/>
+                    <position value="$position" />
                     <rotation value="$Rot" />
                 </warp>
             </actions>
@@ -112,7 +203,7 @@
                 <set_value name="$Inventory" exact="lookup.ware.list" />
                 <do_all exact="$Inventory.count" counter="$i" reverse="true">
                     <do_if value="@$Inventory.{$i}.isinventory == true">
-                        <add_inventory  ware="$Inventory.{$i}" />
+                        <add_inventory ware="$Inventory.{$i}" />
                     </do_if>
                 </do_all>
             </actions>
@@ -230,6 +321,7 @@
             <params>
                 <param name="Title" default="'Menu'" />
                 <param name="List" default="'none'" />
+                <param name="Text" default="'Default'" />
                 <param name="ObjectTable" default="'none'" />
                 <param name="MenuType" default="'none'" />
                 <param name="ReturnCue" default="Main_Menu" />
@@ -271,6 +363,39 @@
                                 <do_all exact="$Print.count" counter="$j">
                                     <signal_cue_instantly cue="md.Simple_Menu_API.Add_Row" />
                                     <set_value name="$Text" exact="if $Print.{$j}.knownname then $Print.{$j}.knownname else $Print" />
+                                    <set_value name="$Object" exact="$Print.{$j}" />
+                                    <include_actions ref="Label" />
+                                    <include_actions ref="Button" />
+                                </do_all>
+                            </do_all>
+                        </do_if>
+                        <do_if value="$MenuType == 'table2'">
+                            <set_value name="$Keys" exact="$ObjectTable.keys.list" />
+                            <do_all exact="$Keys.count" counter="$i">
+                                <signal_cue_instantly cue="md.Simple_Menu_API.Add_Row" />
+                                <set_value name="$Text" exact="if @$Keys.{$i}.knownname then @$Keys.{$i}.knownname else @$Keys.{$i}.name" />
+                                <include_actions ref="TitleLabel" />
+                                <set_value name="$Ships" exact="$ObjectTable.{$Keys.{$i}}.$Ships.count" />
+                                <set_value name="$Stations" exact="$ObjectTable.{$Keys.{$i}}.$Stations.count" />
+                                <set_value name="$Sectors" exact="$ObjectTable.{$Keys.{$i}}.$Sectors.count" />
+                                <signal_cue_instantly cue="md.Simple_Menu_API.Add_Row" />
+                                <set_value name="$Text" exact="'Ships: %s Stations: %s Sectors: %s'.[$Ships  + ' ',$Stations + ' ',$Sectors + ' ']" />
+                                <include_actions ref="Label" />
+                                <remove_value name="$ShipCount" />
+                                <remove_value name="$StationCount" />
+                                <remove_value name="$SectorOwned" />
+                            </do_all>
+                        </do_if>
+                        <do_if value="$MenuType == 'table3'">
+                            <set_value name="$Keys" exact="$ObjectTable.keys.list" />
+                            <do_all exact="$Keys.count" counter="$i">
+                                <signal_cue_instantly cue="md.Simple_Menu_API.Add_Row" />
+                                <set_value name="$Text" exact="@$Keys.{$i} + ' '" />
+                                <include_actions ref="Label" />
+                                <set_value name="$Print" exact="$ObjectTable.{$Keys.{$i}}.$Objects" />
+                                <do_all exact="$Print.count" counter="$j">
+                                    <signal_cue_instantly cue="md.Simple_Menu_API.Add_Row" />
+                                    <set_value name="$Text" exact="$Print.{$j} + ' '" />
                                     <set_value name="$Object" exact="$Print.{$j}" />
                                     <include_actions ref="Label" />
                                     <include_actions ref="Button" />
