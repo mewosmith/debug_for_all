@@ -5,7 +5,7 @@ Add Research
 Add Blueprints  
 Add Inventory  
 Player Position  
-Create Object  
+Create Object  (most of the objects on the list cannot be created)  
 DisplayGalaxy  
 
 SIMPLE MENU API IS UNSTABLE  
