@@ -144,14 +144,60 @@
                 </create_object>
             </actions>
         </cue>
-        <cue name="TransformPosition" instantiate="true">
+        <cue name="TransformPosition5" instantiate="true">
             <conditions>
                 <event_cue_signalled />
             </conditions>
             <actions>
+                <set_value name="$Distance" exact="30000km" />
+                <include_actions ref="PlayerPOS" />
+            </actions>
+        </cue>
+        <cue name="TransformPosition6" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <set_value name="$Distance" exact="20000km" />
+                <include_actions ref="PlayerPOS" />
+            </actions>
+        </cue>
+        <cue name="TransformPosition7" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <set_value name="$Distance" exact="10000km" />
+                <include_actions ref="PlayerPOS" />
+            </actions>
+        </cue>
+        <cue name="TransformPosition8" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <set_value name="$Distance" exact="1000km" />
+                <include_actions ref="PlayerPOS" />
+            </actions>
+        </cue>
+        <cue name="Calc_Position" instantiate="true">
+            <conditions>
+                <event_cue_signalled />
+            </conditions>
+            <actions>
+                <!-- player.zone.position + player.sector.position + player.cluster.position cluster galaxy -->
+                <debug_to_file text="' sector: %s\n player.zone + player.sector: %s\n '.[
+                                player.sector.knownname,              
+                                player.zone.position + player.sector.position, 
+
+                        ]" name="'position_calced.log'" directory="'position_tool'" />
+            </actions>
+        </cue>
+        <library name="PlayerPOS">
+            <actions>
                 <set_value name="$Rot" exact="player.ship.rotation" />
                 <transform_position name="$position" refposition="position.[0,0,0]" refrotation="player.ship.rotation">
-                    <position x="0m" y="0m" z="30000km" />
+                    <position x="0m" y="0m" z="$Distance" />
                 </transform_position>
                 <transform_position name="$position" refposition="player.zone.position" refrotation="player.zone.rotation">
                     <position value="$position" />
@@ -160,8 +206,15 @@
                     <position value="$position" />
                     <rotation value="$Rot" />
                 </warp>
+                <!-- <do_if value="not player.enitiy.$POSLOG?">
+                    <set_value name="player.enitiy.$POSLOG" exact="true" />
+                    <debug_to_file text="'start'" name="'position.log'" directory="'position_tool'" append="false" />
+                </do_if> -->
+                <debug_to_file text="'time: %s sector: %s Positions - player: %s zone: %s sector: %s cluster: %s'.[
+                    player.age,  player.sector.knownname, player.ship.position, player.zone.position, player.sector.position, player.cluster.positon
+                    ]" name="'position.log'" directory="'position_tool'" />
             </actions>
-        </cue>
+        </library>
         <cue name="Player_Position" instantiate="true">
             <conditions>
                 <event_cue_signalled />
@@ -185,11 +238,25 @@
                                 $Position = player.ship.cluster.position,
                                 ],
                             {5} = table [
-                                $Name = 'TransformPosition',
-                                $Return = TransformPosition,
+                                $Name = 'TransformPosition 30000km',
+                                $Return = TransformPosition5,
                                 ],
-                            
-                                  
+                            {6} = table [
+                                $Name = 'TransformPosition 20000km',
+                                $Return = TransformPosition6,
+                                ],
+                            {7} = table [
+                                $Name = 'TransformPosition 10000km',
+                                $Return = TransformPosition7,
+                                ],
+                            {8} = table [
+                                $Name = 'TransformPosition 1000km',
+                                $Return = TransformPosition8,
+                                ],
+                            {9} = table [
+                                $Name = 'Calc Position',
+                                $Return = Calc_Position,
+                                ],                             
                         ]" />
             </actions>
             <cues>
@@ -289,6 +356,11 @@
                 <event_cue_signalled />
             </conditions>
             <actions>
+                <do_if value="not $WarpLog?">
+                    <set_value name="$WarpLog" exact="true" />
+                    <debug_to_file text="'start'" name="'sector.log'" directory="'warptool'" append="false" />
+                </do_if>
+                <debug_to_file text="'Macro: %s Name: %s'.[player.sector.macro, player.sector.knownname]" name="'sector.log'" directory="'warptool'" />
                 <set_value name="$Object" exact="event.param.$echo" />
                 <warp object="player.ship" sector="$Object">
                     <position object="$Object" exact="2km" />
@@ -479,7 +551,7 @@
                                         $width = $Width,
                                         ]" />
                 <signal_cue_instantly cue="md.Simple_Menu_API.Add_Row" />
-                <signal_cue_instantly cue="md.Simple_Menu_API.Make_Label" param="table[
+                <signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
                                         $col=1, 
                                         $text = 'Return To Main Menu',
                                         ]" />
@@ -502,7 +574,7 @@
         </library>
         <library name="Label">
             <actions>
-                <signal_cue_instantly cue="md.Simple_Menu_API.Make_Label" param="table[
+                <signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
                                         $col=1,                                        
                                         $text = $Text,
                                          $color=table[ $r = 200, $g = 200, $b = 200, $a = 100 ],
@@ -511,7 +583,7 @@
         </library>
         <library name="TitleLabel">
             <actions>
-                <signal_cue_instantly cue="md.Simple_Menu_API.Make_Label" param="table[
+                <signal_cue_instantly cue="md.Simple_Menu_API.Make_Text" param="table[
                                         $col=1,                                         
                                         $text = $Text,
                                         $titleColor = 'Helper.color.brightyellow',
